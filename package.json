@@ -1,6 +1,6 @@
 {
   "name": "react-inlinesvg",
-  "version": "0.7.2",
+  "version": "0.7.4",
   "description": "An SVG loader for React",
   "repository": {
     "type": "git",
@@ -23,7 +23,13 @@
   "bugs": {
     "url": "https://github.com/gilbarbara/react-inlinesvg/issues"
   },
-  "main": "./lib/index.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "files": [
+    "es",
+    "lib",
+    "src"
+  ],
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
     "react-dom": "^15.0.0 || ^16.0.0",
@@ -39,6 +45,7 @@
     "babel-jest": "^21.2.0",
     "babel-plugin-array-includes": "^2.0.3",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
@@ -91,6 +98,7 @@
     "postmerge": "node tasks update",
     "prepublishOnly": "npm run build"
   },
+  "browserslist": ["last 2 versions", "safari >= 8", "ios > 8"],
   "browserify": {
     "transform": [
       [
