@@ -6,7 +6,8 @@ import ieXDomain from 'httpplease/plugins/oldiexdomain';
 import {
   configurationError,
   isSupportedEnvironment,
-  randomString, uniquifySVGIDs,
+  randomString,
+  uniquifySVGIDs,
   unsupportedBrowserError,
 } from './utils';
 
@@ -17,7 +18,7 @@ const Status = {
   LOADING: 'loading',
   LOADED: 'loaded',
   FAILED: 'failed',
-  UNSUPPORTED: 'unsupported'
+  UNSUPPORTED: 'unsupported',
 };
 
 const getRequestsByUrl = {};
@@ -28,7 +29,7 @@ export default class InlineSVG extends React.PureComponent {
     super(props);
 
     this.state = {
-      status: Status.PENDING
+      status: Status.PENDING,
     };
 
     this.isActive = false;
@@ -41,17 +42,19 @@ export default class InlineSVG extends React.PureComponent {
     onError: PropTypes.func,
     onLoad: PropTypes.func,
     preloader: PropTypes.node,
+    remove: PropTypes.array,
     src: PropTypes.string.isRequired,
     style: PropTypes.object,
     supportTest: PropTypes.func,
     uniqueHash: PropTypes.string,
     uniquifyIDs: PropTypes.bool,
-    wrapper: PropTypes.func
+    wrapper: PropTypes.func,
   };
 
   static defaultProps = {
     cacheGetRequests: false,
     onLoad: () => {},
+    remove: [],
     supportTest: isSupportedEnvironment,
     uniquifyIDs: true,
     uniqueHash: randomString(),
@@ -68,12 +71,10 @@ export default class InlineSVG extends React.PureComponent {
       if (this.props.supportTest()) {
         if (this.props.src) {
           this.startLoad();
-        }
-        else {
+        } else {
           this.fail(configurationError('Missing source'));
         }
-      }
-      else {
+      } else {
         this.fail(unsupportedBrowserError());
       }
     }
@@ -83,8 +84,7 @@ export default class InlineSVG extends React.PureComponent {
     if (prevProps.src !== this.props.src) {
       if (this.props.src) {
         this.startLoad();
-      }
-      else {
+      } else {
         this.fail(configurationError('Missing source'));
       }
     }
@@ -116,8 +116,7 @@ export default class InlineSVG extends React.PureComponent {
       }
 
       getRequestsByUrl[src].push(callback);
-    }
-    else {
+    } else {
       http.get(src, (err, res) => {
         callback(err, res);
       });
@@ -125,7 +124,9 @@ export default class InlineSVG extends React.PureComponent {
   }
 
   fail(error) {
-    const status = error.isUnsupportedBrowserError ? Status.UNSUPPORTED : Status.FAILED;
+    const status = error.isUnsupportedBrowserError
+      ? Status.UNSUPPORTED
+      : Status.FAILED;
 
     /* istanbul ignore else */
     if (this.isActive) {
@@ -140,9 +141,12 @@ export default class InlineSVG extends React.PureComponent {
   startLoad() {
     /* istanbul ignore else */
     if (this.isActive) {
-      this.setState({
-        status: Status.LOADING
-      }, this.load);
+      this.setState(
+        {
+          status: Status.LOADING,
+        },
+        this.load
+      );
     }
   }
 
@@ -151,7 +155,7 @@ export default class InlineSVG extends React.PureComponent {
 
     if (match) {
       return this.handleLoad(null, {
-        text: match[1] ? atob(match[2]) : decodeURIComponent(match[2])
+        text: match[1] ? atob(match[2]) : decodeURIComponent(match[2]),
       });
     }
 
@@ -165,12 +169,15 @@ export default class InlineSVG extends React.PureComponent {
     }
 
     if (this.isActive) {
-      this.setState({
-        loadedText: res.text,
-        status: Status.LOADED
-      }, () => {
-        this.props.onLoad(this.props.src, isCached);
-      });
+      this.setState(
+        {
+          loadedText: res.text,
+          status: Status.LOADED,
+        },
+        () => {
+          this.props.onLoad(this.props.src, isCached);
+        }
+      );
     }
   };
 
@@ -185,13 +192,30 @@ export default class InlineSVG extends React.PureComponent {
   }
 
   processSVG(svgText) {
-    const { uniquifyIDs, uniqueHash } = this.props;
+    const { uniquifyIDs, uniqueHash, remove } = this.props;
+    let parsedText = svgText;
+
+    if (remove.length) {
+      parsedText = this.removeAttr(parsedText);
+    }
 
     if (uniquifyIDs) {
-      return uniquifySVGIDs(svgText, uniqueHash);
+      return uniquifySVGIDs(parsedText, uniqueHash);
     }
 
     return svgText;
+  }
+
+  removeAttr(svg) {
+    const { remove } = this.props;
+    let parsedSvg = svg;
+
+    remove.forEach(val => {
+      const regex = new RegExp(`${val}="([^"]*)"`);
+      parsedSvg = parsedSvg.replace(regex, '');
+    });
+
+    return parsedSvg;
   }
 
   renderContents() {
@@ -205,22 +229,25 @@ export default class InlineSVG extends React.PureComponent {
   }
 
   render() {
+    const { loadedText } = this.state;
     let content;
     let html;
 
-    if (this.state.loadedText) {
+    if (loadedText) {
       html = {
-        __html: this.processSVG(this.state.loadedText)
+        __html: this.processSVG(loadedText),
       };
-    }
-    else {
+    } else {
       content = this.renderContents();
     }
 
-    return this.props.wrapper({
-      style: this.props.style,
-      className: this.getClassName(),
-      dangerouslySetInnerHTML: html,
-    }, content);
+    return this.props.wrapper(
+      {
+        style: this.props.style,
+        className: this.getClassName(),
+        dangerouslySetInnerHTML: html,
+      },
+      content
+    );
   }
 }

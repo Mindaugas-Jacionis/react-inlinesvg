@@ -1,39 +1,6 @@
-# react-inlinesvg
+# react-inlinesvg-extended
 
-[![NPM version](https://badge.fury.io/js/react-inlinesvg.svg)](https://www.npmjs.com/package/react-inlinesvg) 
-[![build status](https://travis-ci.org/gilbarbara/react-inlinesvg.svg)](https://travis-ci.org/gilbarbara/react-inlinesvg) 
-[![Maintainability](https://api.codeclimate.com/v1/badges/c7e42fe511b80cc25760/maintainability)](https://codeclimate.com/github/gilbarbara/react-inlinesvg/maintainability) 
-[![Test Coverage](https://api.codeclimate.com/v1/badges/c7e42fe511b80cc25760/test_coverage)](https://codeclimate.com/github/gilbarbara/react-inlinesvg/test_coverage)
-
-One of the reasons SVGs are awesome is because you can style them with CSS.
-Unfortunately, this winds up not being too useful in practice because the style
-element has to be in the same document. This leaves you with three bad options:
-
-1. Embed the CSS in the SVG document
-    * Can't use your CSS preprocessors (LESS, SASS)
-    * Can't target parent elements (button hover, etc.)
-    * Makes maintenance difficult
-2. Link to a CSS file in your SVG document
-    * Sharing styles with your HTML means duplicating paths across your project,
-      making maintenance a pain
-    * Not sharing styles with your HTML means extra HTTP requests (and likely
-      duplicating paths between different SVGs)
-    * Still can't target parent elements
-    * Your SVG becomes coupled to your external stylesheet, complicating reuse.
-3. Embed the SVG in your HTML
-    * Bloats your HTML
-    * SVGs can't be cached by browsers between pages.
-    * A maintenance nightmare
-
-But there's an alternative that sidesteps these issues: load the SVG with an XHR
-request and then embed it in the document. That's what this component does.
-
-
-### Note
-
-The SVG [`<use>`][svg-use-external-source] element can be used to achieve
-something similar to this component. See [this article][use-article] for more
-information and [this table][use-support] for browser support and caveats.
+This is extended version of [`react-inlinesvg`](https://www.npmjs.com/package/react-inlinesvg). I recommend on reviewing available `props` list and if none of needed have "(extended)" next to their name then I would recommend on using original [package](https://www.npmjs.com/package/react-inlinesvg).
 
 Usage
 ----
@@ -112,6 +79,10 @@ This will receive a single argument:
 }
 ```
 
+**remove** (`extended`) - `array`  
+Sometimes you find yourself in need of removing some attributes from original svg(i.e. `height`) and you don't have control over that anywhere but your code.  
+An array of attributes to remove from `<svg >` tag. Default `[]`(empty array).
+
 
 Browser Support
 ----
@@ -138,9 +109,3 @@ input to generate the `src`!
 [svg-use-external-source]: http://css-tricks.com/svg-use-external-source
 [use-article]: http://taye.me/blog/svg/a-guide-to-svg-use-elements/
 [use-support]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use#Browser_compatibility
-
-
-Credits
-----
-Thanks to [@matthewwithanm](https://github.com/matthewwithanm) for creating this component and so kindly transfer it to me.
-I'll definitely keep the good work! ❤️

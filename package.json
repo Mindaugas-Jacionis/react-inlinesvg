@@ -1,35 +1,20 @@
 {
-  "name": "react-inlinesvg",
-  "version": "0.7.4",
-  "description": "An SVG loader for React",
+  "name": "react-inlinesvg-extended",
+  "version": "0.0.1",
+  "description": "SVG loader for React",
   "repository": {
     "type": "git",
     "url": "git://github.com/gilbarbara/react-inlinesvg.git"
   },
-  "keywords": [
-    "react",
-    "react-component",
-    "component",
-    "svg"
-  ],
-  "author": "Gil Barbara <gilbarbara@gmail.com>",
-  "contributors": [
-    {
-      "name": "Matthew Dapena-Tretter",
-      "email": "m@tthewwithanm.com"
-    }
-  ],
+  "keywords": ["react", "react-component", "component", "svg"],
+  "author": "Mindaugas Jačionis <m.jacionis@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/gilbarbara/react-inlinesvg/issues"
   },
   "main": "lib/index.js",
   "module": "es/index.js",
-  "files": [
-    "es",
-    "lib",
-    "src"
-  ],
+  "files": ["es", "lib", "src"],
   "peerDependencies": {
     "prop-types": "^15.0.0",
     "react": "^15.0.0 || ^16.0.0",
@@ -85,25 +70,23 @@
     "yargs": "^10.0.3"
   },
   "scripts": {
-    "build": "npm run clean && npm run build:commonjs && npm run build:es && npm run build:standalone",
+    "build":
+      "npm run clean && npm run build:commonjs && npm run build:es && npm run build:standalone",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src -d lib",
     "build:es": "cross-env NODE_ENV=production babel src -d es",
     "build:standalone": "gulp build",
     "watch": "npm run build:commonjs -- -w",
     "clean": "rimraf es && rimraf lib && rimraf standalone",
     "start": "gulp server",
-    "test": "npm run start & SERVE_PID=$! && jest --bail --coverage && kill $SERVE_PID",
+    "test":
+      "npm run start & SERVE_PID=$! && jest --bail --coverage && kill $SERVE_PID",
     "test:watch": "jest --watch",
     "lint": "eslint -c ./.eslintrc $(find src -name '*.js')",
     "precommit": "node tasks has-commits && npm run lint && npm test",
     "postmerge": "node tasks update",
     "prepublishOnly": "npm run build"
   },
-  "browserslist": [
-    "last 2 versions",
-    "safari >= 8",
-    "ios > 8"
-  ],
+  "browserslist": ["last 2 versions", "safari >= 8", "ios > 8"],
   "browserify": {
     "transform": [
       [
